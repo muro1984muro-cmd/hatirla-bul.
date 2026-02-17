@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Hatırla & Bul</title>
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#111;
+    color:white;
+    text-align:center;
+}
+h1{margin-top:20px;}
+#info{
+    margin:10px;
+    font-size:18px;
+}
+#game{
+    display:grid;
+    gap:10px;
+    justify-content:center;
+    margin-top:20px;
+}
+.box{
+    width:70px;
+    height:70px;
+    background:#444;
+    border-radius:10px;
+    cursor:pointer;
+    transition:0.2s;
+}
+.box:hover{transform:scale(1.1);}
+.green{background:lime;}
+button{
+    margin-top:20px;
+    padding:10px 15px;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+    background:orange;
+}
+</style>
+</head>
+<body>
+
+<h1>🧠 HATIRLA & BUL</h1>
+<div id="info">Level: 1</div>
+<div id="game"></div>
+<button onclick="startGame()">Başla</button>
+
+<script>
+let level = 1;
+let correctBoxes = [];
+let clickedCount = 0;
+
+function startGame(){
+    level = 1;
+    loadLevel();
+}
+
+function loadLevel(){
+    let game = document.getElementById("game");
+    let info = document.getElementById("info");
+
+    info.innerHTML = "Level: " + level;
+    game.innerHTML = "";
+
+    clickedCount = 0;
+    correctBoxes = [];
+
+    let size = 2 + Math.floor(level/3); 
+    game.style.gridTemplateColumns = "repeat(" + size + ", 70px)";
+    let total = size * size;
+
+    let greenCount = Math.min(level + 1, total-1);
+
+    while(correctBoxes.length < greenCount){
+        let rand = Math.floor(Math.random() * total);
+        if(!correctBoxes.includes(rand)){
+            correctBoxes.push(rand);
+        }
+    }
+
+    for(let i=0;i<total;i++){
+        let box = document.createElement("div");
+        box.className = "box";
+
+        if(correctBoxes.includes(i)){
+            box.classList.add("green");
+        }
+
+        box.onclick = function(){
+            if(!box.classList.contains("active")){
+                if(correctBoxes.includes(i)){
+                    box.style.background="lime";
+                    box.classList.add("active");
+                    clickedCount++;
+                    if(clickedCount === correctBoxes.length){
+                        level++;
+                        setTimeout(loadLevel,800);
+                    }
+                }else{
+                    alert("❌ Yanlış! Level: " + level);
+                    level = 1;
+                    loadLevel();
+                }
+            }
+        };
+
+        game.appendChild(box);
+    }
+
+    setTimeout(()=>{
+        let boxes=document.querySelectorAll(".box");
+        boxes.forEach(b=>b.classList.remove("green"));
+    },1500);
+}
+</script>
+
+</body>
+</html>
